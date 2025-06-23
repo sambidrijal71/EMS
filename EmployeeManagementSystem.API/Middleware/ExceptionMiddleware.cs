@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using EmployeeManagementSystem.Application.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeManagementSystem.API.Middleware
@@ -26,16 +27,25 @@ namespace EmployeeManagementSystem.API.Middleware
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 context.Response.ContentType = "application/problem+json";
+
+                var (statusCode, title) = ex switch
+                {
+                    UserAuthenticationException => ((int)HttpStatusCode.BadRequest, "Authentication Error"),
+                    // EmployeeFetchException => ((int)HttpStatusCode.InternalServerError, "Employee Fetch Error"),
+                    _ => ((int)HttpStatusCode.InternalServerError, "An unexpected error occurred")
+                };
+                context.Response.StatusCode = statusCode;
 
                 var problemDetails = new ProblemDetails
                 {
-                    Type = "https://httpstatuses.com/500",
-                    Title = _environment.IsDevelopment() ? ex.Message : "An unexpected error occurred",
-                    Status = context.Response.StatusCode,
+                    Type = $"https://httpstatuses.com/{statusCode}",
+                    Title = _environment.IsDevelopment() ? ex.Message : title,
+                    Status = statusCode,
                     Detail = _environment.IsDevelopment() ? ex.StackTrace : "Please contact the admin",
+                    Instance = context.Request.Path
                 };
+
                 var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
                 var json = JsonSerializer.Serialize(problemDetails, options);
                 await context.Response.WriteAsync(json);

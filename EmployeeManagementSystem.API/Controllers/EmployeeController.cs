@@ -40,7 +40,7 @@ namespace EmployeeManagementSystem.API.Controllers
         public async Task<ActionResult> UpdateEmployee(int id, UpdateEmployeeDto employeeDto)
         {
             var result = await _employeeRepository.UpdateEmployeeAsync(id, employeeDto);
-            if (!result) return NotFound(BuildErrorWithContext(ErrorTemplates.NotFound("New data and existing data cannot be same.")));
+            if (!result) return NotFound(ErrorTemplates.NotFound("New data and existing data cannot be same."));
             return NoContent();
         }
 
@@ -48,7 +48,7 @@ namespace EmployeeManagementSystem.API.Controllers
         public async Task<ActionResult> DeleteEmployee(int id)
         {
             var result = await _employeeRepository.DeleteEmployeeAsync(id);
-            if (!result) return BadRequest(BuildErrorWithContext(ErrorTemplates.BadRequest($"Employee with id {id} does not exist.")));
+            if (!result) return BadRequest(ErrorTemplates.BadRequest($"Employee with id {id} does not exist."));
             return NoContent();
         }
     }

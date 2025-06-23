@@ -1,12 +1,12 @@
-using EmployeeManagementSystem.API.Errors;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeManagementSystem.API.Helper
 {
     public static class ErrorTemplates
     {
-        public static ApiError NotFound(string? detail)
+        public static ProblemDetails NotFound(string? detail)
         {
-            return new ApiError
+            return new ProblemDetails
             {
                 Type = "https://httpstatuses.com/404",
                 Title = "Resource not found",
@@ -15,9 +15,9 @@ namespace EmployeeManagementSystem.API.Helper
             };
         }
 
-        public static ApiError BadRequest(string? detail)
+        public static ProblemDetails BadRequest(string? detail)
         {
-            return new ApiError
+            return new ProblemDetails
             {
                 Type = "https://httpstatuses.com/400",
                 Title = "Bad request provided",
@@ -26,9 +26,9 @@ namespace EmployeeManagementSystem.API.Helper
             };
         }
 
-        public static ApiError UnAuthorized(string? detail)
+        public static ProblemDetails Unauthorized(string? detail)
         {
-            return new ApiError
+            return new ProblemDetails
             {
                 Type = "https://httpstatuses.com/401",
                 Title = "Unauthorized access",
@@ -36,16 +36,16 @@ namespace EmployeeManagementSystem.API.Helper
                 Detail = detail ?? "The content you are trying to view is unauthorized.",
             };
         }
-        public static ApiError Conflict(string? detail)
+
+        public static ProblemDetails Conflict(string? detail)
         {
-            return new ApiError
+            return new ProblemDetails
             {
                 Type = "https://httpstatuses.com/409",
                 Title = "Conflict",
                 Status = StatusCodes.Status409Conflict,
-                Detail = detail ?? "A conflict occurred while processing your request."
+                Detail = detail ?? "A conflict occurred while processing your request.",
             };
         }
-
     }
 }

@@ -1,5 +1,4 @@
-
-using EmployeeManagementSystem.API.Errors;
+using EmployeeManagementSystem.API.Helper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmployeeManagementSystem.API.Controllers
@@ -9,24 +8,13 @@ namespace EmployeeManagementSystem.API.Controllers
         [HttpGet("not-found")]
         public IActionResult GetNotFoundError()
         {
-            return NotFound(BuildErrorWithContext(new ApiError
-            {
-                Title = "Resource not found",
-                Status = StatusCodes.Status404NotFound,
-                Detail = "The requested resource could not be found.",
-            }));
+            return NotFound(ErrorTemplates.NotFound("The requested resource could not be found."));
         }
 
         [HttpGet("bad-request")]
         public IActionResult GetBadRequestError()
         {
-            return BadRequest(BuildErrorWithContext(new ApiError
-            {
-                Title = "Bad request provided",
-                Status = StatusCodes.Status400BadRequest,
-                Detail = "This is a bad request, please check your request.",
-                Path = HttpContext.Request.Path,
-            }));
+            return BadRequest(ErrorTemplates.BadRequest("This is a bad request, please check your request."));
         }
 
         [HttpGet("validation")]
@@ -40,13 +28,7 @@ namespace EmployeeManagementSystem.API.Controllers
         [HttpGet("unauthorized")]
         public IActionResult GetUnAuthorizedError()
         {
-            return Unauthorized(BuildErrorWithContext(new ApiError
-            {
-                Title = "Unauthorized access",
-                Status = StatusCodes.Status401Unauthorized,
-                Detail = "The content you are trying to view is unauthorized.",
-                Path = HttpContext.Request.Path,
-            }));
+            return Unauthorized(ErrorTemplates.Unauthorized("The content you are trying to view is unauthorized."));
         }
 
         [HttpGet("server-error")]
