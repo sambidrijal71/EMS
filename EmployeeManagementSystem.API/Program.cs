@@ -1,10 +1,16 @@
+using EmployeeManagementSystem.API.Extensions;
 using EmployeeManagementSystem.API.Middleware;
+using EmployeeManagementSystem.Application.Authentication;
 using EmployeeManagementSystem.Application.Interfaces;
+using EmployeeManagementSystem.Infrastructure.Authentication;
 using EmployeeManagementSystem.Infrastructure.Persistence;
 using EmployeeManagementSystem.Infrastructure.Persistence.Repositories;
 using EmployeeManagementSystem.Infrastructure.SeedData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Identity;
+using EmployeeManagementSystem.Domain.Entities;
+using EmployeeManagementSystem.Application.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,9 +25,18 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 });
 builder.Services.AddControllers();
 builder.Services.AddCors();
-builder.Services.AddAuthentication();
-builder.Services.AddAuthorization();
+
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+
+builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddAuthorization();
+
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
@@ -31,12 +46,12 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseCors(opt => opt.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:3000"));
-app.UseAuthentication();
-app.UseAuthorization();
 
 app.MapControllers();
 
 app.UseMiddleware<ExceptionMiddleware>();
+app.UseAuthentication();
+app.UseAuthorization();
 
 using (var scope = app.Services.CreateScope())
 {
