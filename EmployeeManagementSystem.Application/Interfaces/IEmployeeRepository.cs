@@ -1,5 +1,4 @@
 using EmployeeManagementSystem.Application.DTOs;
-using EmployeeManagementSystem.Domain.Entities;
 
 namespace EmployeeManagementSystem.Application.Interfaces
 {
