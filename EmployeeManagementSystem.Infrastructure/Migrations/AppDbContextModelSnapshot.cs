@@ -15,7 +15,7 @@ namespace EmployeeManagementSystem.Infrastructure.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "9.0.6");
+            modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
 
             modelBuilder.Entity("EmployeeManagementSystem.Domain.Entities.Employee", b =>
                 {
@@ -53,25 +53,29 @@ namespace EmployeeManagementSystem.Infrastructure.Migrations
                     b.ToTable("Employees");
                 });
 
+            modelBuilder.Entity("EmployeeManagementSystem.Domain.Entities.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("RefreshTokenExpiryTime")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("EmployeeManagementSystem.Domain.Entities.Employee", b =>
                 {
-                    b.OwnsOne("EmployeeManagementSystem.Domain.ValueObjects.DateOfBirth", "DateOfBirth", b1 =>
-                        {
-                            b1.Property<int>("EmployeeId")
-                                .HasColumnType("INTEGER");
-
-                            b1.Property<DateOnly>("Value")
-                                .HasColumnType("TEXT")
-                                .HasColumnName("DateOfBirth");
-
-                            b1.HasKey("EmployeeId");
-
-                            b1.ToTable("Employees");
-
-                            b1.WithOwner()
-                                .HasForeignKey("EmployeeId");
-                        });
-
                     b.OwnsOne("EmployeeManagementSystem.Domain.ValueObjects.Email", "Email", b1 =>
                         {
                             b1.Property<int>("EmployeeId")
@@ -81,6 +85,23 @@ namespace EmployeeManagementSystem.Infrastructure.Migrations
                                 .IsRequired()
                                 .HasColumnType("TEXT")
                                 .HasColumnName("Email");
+
+                            b1.HasKey("EmployeeId");
+
+                            b1.ToTable("Employees");
+
+                            b1.WithOwner()
+                                .HasForeignKey("EmployeeId");
+                        });
+
+                    b.OwnsOne("EmployeeManagementSystem.Domain.ValueObjects.DateOfBirth", "DateOfBirth", b1 =>
+                        {
+                            b1.Property<int>("EmployeeId")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<DateOnly>("Value")
+                                .HasColumnType("TEXT")
+                                .HasColumnName("DateOfBirth");
 
                             b1.HasKey("EmployeeId");
 
@@ -141,6 +162,71 @@ namespace EmployeeManagementSystem.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("PhoneNumber")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EmployeeManagementSystem.Domain.Entities.User", b =>
+                {
+                    b.OwnsOne("EmployeeManagementSystem.Domain.ValueObjects.Email", "Email", b1 =>
+                        {
+                            b1.Property<int>("UserId")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("TEXT")
+                                .HasColumnName("Email");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("Users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
+                    b.OwnsOne("EmployeeManagementSystem.Domain.ValueObjects.Password", "Password", b1 =>
+                        {
+                            b1.Property<int>("UserId")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("TEXT")
+                                .HasColumnName("Password");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("Users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
+                    b.OwnsOne("EmployeeManagementSystem.Domain.ValueObjects.UserName", "Username", b1 =>
+                        {
+                            b1.Property<int>("UserId")
+                                .HasColumnType("INTEGER");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("TEXT")
+                                .HasColumnName("Username");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("Users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
+                    b.Navigation("Email")
+                        .IsRequired();
+
+                    b.Navigation("Password");
+
+                    b.Navigation("Username")
                         .IsRequired();
                 });
 #pragma warning restore 612, 618
